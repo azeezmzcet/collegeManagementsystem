@@ -40,11 +40,10 @@ function CreateTeacher() {
     };
 
     const handleCreateTeacher = () => {
-        // Implement the logic to create a teacher
-        // This could be an API call to your backend
+       
         console.log("Creating teacher with username:", username, "and course:", list);
-        //Example API call (you'll need to implement this)
-        axios.post('http://127.0.0.1:8000/api/create-teacher', { username, password, course: list })
+        
+        axios.post('http://127.0.0.1:8000/api/teacher-register', { username, password, course: list })
             .then(response => {
                 console.log("Teacher created:", response.data);
                 navigate('/dashboard');

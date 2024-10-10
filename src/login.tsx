@@ -19,21 +19,17 @@ function Login() {
         if (response.data.tokenName) {
           console.log('Login successful', response.data);
           localStorage.setItem("Token", response.data.tokenName);
-          navigate('/dashboard'); 
+          if(response.data.role === 'principal'){
+            navigate('/dashboard');
+          }else if (response.data.role ==='teacher'){
+            navigate('/teacher-dashboard');
+          }
         }else {
           setError('Login failed, no token returned');
       }
       })
       .catch((error) => {
-        if(error.message){
-          setError(error.response.data.message);
-          console.log('Error', error);
-        }else{
-          setError('an error ,please try again');
-
-        }
-         // Show error if credentials are wrong
-        
+        setError(error.response?.data?.message || 'An error occurred, please try again');
       });
   };
 
