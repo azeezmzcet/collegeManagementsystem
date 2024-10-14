@@ -11,6 +11,7 @@ function CreateTeacher() {
     const [list, setList] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [ teacher, setTeachers] = useState(['']); 
     // const [error, setError] = useState('');
     const navigate = useNavigate();
 
@@ -45,8 +46,16 @@ function CreateTeacher() {
         
         axios.post('http://127.0.0.1:8000/api/teacher-register', { username, password, course: list })
             .then(response => {
+              const newTeacher = response.data;
+
+              if (newTeacher) {
+                
+                setTeachers((prevTeachers) => [...prevTeachers, newTeacher]);
                 console.log("Teacher created:", response.data);
                 navigate('/dashboard');
+
+                }
+
             })
             .catch(error => {
                 console.log("Error creating teacher:", error);
