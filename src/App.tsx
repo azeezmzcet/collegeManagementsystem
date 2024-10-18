@@ -3,13 +3,16 @@
 import './App.css'
 import Login from './login'
 import { BrowserRouter as Router ,Routes,Route } from 'react-router-dom';
-import Dashboard from './dashboard';
+import Dashboard from './maindashboard';
 import Teacherlist from './teacherlist';
 //import TeacherDashboard from './TeacherDashboard';
 //import SeperateStudentList from './seperatestudentlist';
 import TeacherDashboard from "./TeacherDashboard";
 import CourseManager from './courseManager';
 //import TeachersDropdown from './teacherdropdown';
+
+
+
 
 function App() {
   
