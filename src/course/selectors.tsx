@@ -9,3 +9,8 @@ export const selectCourses = createSelector(
   [selectCourseState],
   (courseState) => courseState.courses
 );
+
+export const selectStudents = createSelector(
+  [selectCourseState],
+  (courseState) => courseState.students
+);

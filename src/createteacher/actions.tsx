@@ -15,21 +15,36 @@ export const FETCH_TEACHER_FAILURE = 'FETCH_TEACHERS_FAILURE';
 
 export const fetchTeachersRequest = () => ({ type: FETCH_TEACHER_REQUEST });
 
+export const fetchTeachersSuccess = (teachers: any) => ({
+  type: FETCH_TEACHER_SUCCESS,
+  payload: teachers,
+});
+
+export const fetchTeachersFailure = (error: string) => ({
+  type: FETCH_TEACHER_FAILURE,
+  payload: error,
+})
+
+
 
 
 
 // teacherCreateActions.ts
 export const createTeacherRequest = (teacherData: { username: string; password: string; course: string }) => ({
+  
+  
     type: CREATE_TEACHER_REQUEST,
     payload: teacherData,
   });
   
-  export const createTeacherSuccess = (data: any) => ({
+  export const createTeacherSuccess = (teacher: any) => ({
+    
     type: CREATE_TEACHER_SUCCESS,
-    payload: data,
+    payload: teacher,
   });
   
   export const createTeacherFailure = (error: string) => ({
+   
     type: CREATE_TEACHER_FAILURE,
     payload: error,
   });

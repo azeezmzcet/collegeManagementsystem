@@ -1,6 +1,6 @@
 // teacherCreateSagas.ts
 import { call, put, takeEvery } from 'redux-saga/effects';
-import axios from 'axios';
+import axios,{ AxiosRequestConfig } from 'axios';
 import {
   FETCH_TEACHER_REQUEST,
   FETCH_TEACHER_SUCCESS,
@@ -12,8 +12,8 @@ import {
 
 
   CREATE_TEACHER_REQUEST,
-  createTeacherSuccess,
-  createTeacherFailure,
+  CREATE_TEACHER_SUCCESS,
+  CREATE_TEACHER_FAILURE,
 } from './actions';
 
 
@@ -22,7 +22,7 @@ import {
 
 function* fetchTeacher(){
   try {
-    const response = yield call(axios.get ,"http://127.0.0.1:8000/api/teacher");
+    const response:AxiosRequestConfig = yield call(axios.get ,"http://127.0.0.1:8000/api/teacher");
     yield put ({ type: FETCH_TEACHER_SUCCESS , payload: response.data});
    // setTeachers(response.data.teachers);
   } catch (error) {
@@ -42,25 +42,26 @@ function* fetchTeacher(){
 
 function* createTeacherSaga(action: any) {
   try {
-    const { username, password, course } = action.payload;
+   // const { username, password, course } = action.payload;
+   console.log('create 7');
+    const response:AxiosRequestConfig = yield call(axios.post, 'http://127.0.0.1:8000/api/teacher-register', action.payload);
+    console.log('create 8');
 
-    const response = yield call(axios.post, 'http://127.0.0.1:8000/api/teacher-register', {
-      username,
-      password,
-      course,
-    });
+    yield put({type: CREATE_TEACHER_SUCCESS, payload:response.data});
+    console.log('create 9');
 
-    yield put(createTeacherSuccess(response.data));
-    
+   // action.payload.navigate('/dashboard');
   } catch (error) {
+    console.log('create 10');
     console.error('Error creating teacher:', error);
-    yield put(createTeacherFailure('Failed to create teacher.'));
+    console.log('create 11');
+    yield put({type: CREATE_TEACHER_FAILURE, payload:error.message});
+    console.log('create 12');
   }
 }
 
-export function* teacherCreateSaga() {
-  yield takeEvery(CREATE_TEACHER_REQUEST, createTeacherSaga);
-}
+
+
 
 
 
@@ -71,5 +72,6 @@ export function* teacherCreateSaga() {
 
 export function* teacherSaga() {
   yield takeEvery(FETCH_TEACHER_REQUEST, fetchTeacher);
+  yield takeEvery(CREATE_TEACHER_REQUEST, createTeacherSaga);
   
 }

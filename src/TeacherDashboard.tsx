@@ -1,109 +1,89 @@
-// import axios from 'axios';
-// import { useState, useEffect } from 'react';
 
 
-// interface Student {
-//   name: string;
-//   course: string;
-// }
-
-// interface TeacherDashboardProps {
-//   course: string; // Receive the selected teacher's course as a prop
-// }
-
-// function TeacherDashboard({ course }: TeacherDashboardProps) {
-//   const [students, setStudents] = useState<Student[]>([]);
-//   const [loading, setLoading] = useState<boolean>(true);
-//   const [error, setError] = useState<string | null>(null);
-
-
-//   useEffect(() => {
-//     const fetchStudents = async () => {
-//       setLoading(true);
-//       setError(null);
-
-//       try {
-//         const token = localStorage.getItem('Token');
-        
-
-//         // Fetch students for the selected teacher's course
-//         const response = await axios.get('http://127.0.0.1:8000/api/studentlist', {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//           },
-//           params: { course }, // Send the course as a query parameter
-//         });
-
-//         setStudents(response.data);
-//       } catch (error) {
-//         console.error('Error fetching students:', error);
-//         setError('Failed to fetch students.');
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     if (course) {
-//       fetchStudents();
-//     }
-//   }, [course]); // Refetch students whenever the course changes
-
-//   return (
-//     <div>
-//       <h3>Students in {course}</h3>
-//       {loading && <p>Loading daaa...</p>}
-//       {error && <p style={{ color: 'red' }}>{error}</p>}
-//       <ol>
-//         {students.length > 0 ? (
-//           students.map((student, index) => (
-//             <li key={index}>
-//               {student.name} - {student.course}
-//             </li>
-//           ))
-//         ) : (
-//           <p>No students found for this course.</p>
-//         )}
-//       </ol>
-//     </div>
-//   );
-// }
-
-// export default TeacherDashboard;
+import {
+  useState,
+  useEffect,
+} from "react";
+import { fetchStudentsRequest } from "./course/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { selectStudents } from "./course/selectors";
+import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 
 
-
-// TeacherDashboard.tsx
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchStudentsRequest } from './course/actions'; // Import the action
+interface TeacherDashboardProps {
+  course?: string;
+  courseType?: string; // Receive the selected teacher's course as a prop
+}
 
 function TeacherDashboard({ course }: TeacherDashboardProps) {
+
+  const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch();
-  const { students, loading, error } = useSelector((state: any) => state.teacherReducer); // Access the Redux state
+  const navigate=useNavigate();
+  const students = useSelector(selectStudents);
+  console.log("akjsdkjnasdkjn")
+  
 
   useEffect(() => {
-    if (course) {
-      dispatch(fetchStudentsRequest(course)); // Dispatch the action to fetch students
+    if (course) { // teachercourse
+      dispatch(fetchStudentsRequest({ course }));
+    } else {
+      const course = localStorage.getItem("course");
+      dispatch(fetchStudentsRequest({ course }));
     }
-  }, [course, dispatch]);
+  }, [course]);
+
+
+
+  const handlelogout=()=>{
+    navigate('/')
+    localStorage.clear();
+    console.log('sotrgae clear');
+ 
+  }
+
+
 
   return (
     <div>
-      <h3>Students in {course}</h3>
-      {loading && <p>Loading data...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <ol>
-        {students.length > 0 ? (
-          students.map((student, index) => (
-            <li key={index}>
-              {student.name} - {student.course}
-            </li>
-          ))
-        ) : (
-          <p>No students found for this course.</p>
-        )}
-      </ol>
+      <Button onClick={handlelogout} variant="contained" style={{position:"absolute" ,top:'40px',right:'40px'}}>LOGOUT</Button>
+      <Box>
+       
+      <Typography variant="h4" gutterBottom>
+        Student List
+      </Typography>
+      
+        
+      {error && <Typography color="error">{error}</Typography>}
+
+      {students.length > 0 ? (
+
+        <TableContainer component={Paper} sx={{ maxHeight: 550 }} >
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell align="left" width={"100px"}><b>ID</b></TableCell>
+                <TableCell align="left"><b>Name</b></TableCell>
+                <TableCell align="left" ><b>Course</b></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {students.map((student: { id: string; name: string; course: string }) => (
+                <TableRow key={student.id}>
+                  <TableCell>{student.id}</TableCell>
+                  <TableCell>{student.name}</TableCell>
+                  <TableCell>{student.course}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <Typography>No students found for this course.</Typography>
+      )}
+     </Box>
     </div>
   );
 }
