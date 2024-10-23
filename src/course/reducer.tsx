@@ -20,8 +20,28 @@ import {
 
     
   } from './actions';
+
+  interface Course {
+    id: number; 
+    name: string; 
+  }
   
-  const initialState = {
+  interface Student {
+    id: number; 
+    name: string; 
+  }
+
+
+  interface CourseState {
+    courses: Course[];
+    students: Student[];
+    loading: boolean;
+    error: string | null;
+  }
+
+
+  
+  const initialState:CourseState = {
     courses: [],
     students: [],
     loading: false,

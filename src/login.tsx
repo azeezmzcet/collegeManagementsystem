@@ -11,7 +11,7 @@ function Login() {
   const [error, setError] = useState<string | null>(null);
 
   const [open, setOpen] = useState<boolean>(false);
-  const [openError, setErrorOpen] = useState<boolean>(false);
+  const [openError] = useState<boolean>(false);
 
   const [usernameedit, setUsernameedit] = useState<string>('');
   const [passwordedit, setPasswordedit] = useState<string>('');
@@ -48,7 +48,8 @@ if(!usernameedit && !passwordedit){
   setOpen(true);
 
 }else{
-  setError(true);
+  setError('Please fix the errors');
+  //setError(true);
   setOpen(false);
 }
   
@@ -56,7 +57,7 @@ if(!usernameedit && !passwordedit){
 
 const handleSnaker =()=>{
   setOpen(false);
-  setError(false);
+  setError(null);
 }
     
 
@@ -65,13 +66,19 @@ const handleSnaker =()=>{
   return (
     <div>
       <h1> College Management</h1>
-      <Box>
+      <Box display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      minHeight="50vh">
         <Grid container spacing={2} sx={{
           width: { xs: '90%', sm: '70%', md: '40%' },
           padding: { xs: '20px', md: '40px' },
           boxShadow: '0px 4px 12px rgba(0,0,0,0.1)',
           borderRadius: '8px',
-          backgroundColor: '#fff'
+          //background: "rgb(238,174,202)",
+          background:" radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(46,73,103,1) 100%)",
+         
         }}>
           <Grid item xs={12} textAlign='center'>
             <Typography variant='h4' component='h1' color='black'>

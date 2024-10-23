@@ -39,14 +39,53 @@ import {
  
 } from './actions';
 
+
+
+
+interface CreateCourseAction {
+  type: typeof CREATE_COURSE_REQUEST;
+  payload: { name: string };
+}
+
  
+interface UpdateCourseAction {
+  type: typeof UPDATE_COURSE_REQUEST;
+  payload: { id: number; name: string };
+}
+
+interface DeleteCourseAction {
+  type: typeof DELETE_COURSE_REQUEST;
+  payload: number;
+}
+
+interface FetchStudentsAction {
+  type: typeof FETCH_STUDENTS_REQUEST;
+  payload: { course: string };
+}
+
+interface CreateStudentAction {
+  type: typeof CREATE_STUDENTS_REQUEST;
+  payload: unknown; // Define specific student shape if possible
+}
+
+interface UpdateStudentAction {
+  id: unknown;
+  type: typeof UPDATE_STUDENTS_REQUEST;
+  payload: unknown; // Define specific student shape if possible
+}
+
+interface DeleteStudentAction {
+  type: typeof DELETE_STUDENTS_REQUEST;
+  payload: number;
+}
+
 
 function* fetchCourses() {
   try {
     const response:AxiosRequestConfig = yield call(axios.get, 'http://127.0.0.1:8000/api/courses');
     yield put({ type: FETCH_COURSES_SUCCESS, payload: response.data });
   } catch (error) {
-    yield put({ type: FETCH_COURSES_FAILURE, payload: error.message });
+    yield put({ type: FETCH_COURSES_FAILURE, payload: (error as Error).message });
   }
 }
 
@@ -58,16 +97,16 @@ function* fetchCourses() {
 
 
 
-function* createCourse(action){
+function* createCourse(action: CreateCourseAction){
   try {
     // Create a new course
-    const courseResponse:AxiosRequestConfig = yield call(axios.post, 'http://127.0.0.1:8000/api/courses', { name: action.payload.name });
-    yield put({type:CREATE_COURSE_SUCCESS,payload:courseResponse.data});
+    const response:AxiosRequestConfig = yield call(axios.post, 'http://127.0.0.1:8000/api/courses', { name: action.payload.name });
+    yield put({type:CREATE_COURSE_SUCCESS,payload:response.data});
   
 
   }catch (error) {
    
-    yield put({type: CREATE_COURSE_FAILURE, payload:error.message});
+    yield put({type: CREATE_COURSE_FAILURE, payload:(error as Error).message});
   }
 }
 
@@ -85,7 +124,7 @@ function* createCourse(action){
 
 
 
-function* updateCourse(action) {
+function* updateCourse(action:UpdateCourseAction) {
   try {
     console.log("action----", action);
     const response:AxiosRequestConfig = yield call(axios.put, `http://127.0.0.1:8000/api/courses/${action.payload.id}`, { name: action.payload.name});
@@ -93,7 +132,7 @@ function* updateCourse(action) {
 
     yield put({ type: UPDATE_COURSE_SUCCESS, payload: response.data });
   } catch (error) {
-    yield put({ type: UPDATE_COURSE_FAILURE, payload: error.message });
+    yield put({ type: UPDATE_COURSE_FAILURE, payload:( error as Error).message });
   }
 }
 
@@ -106,12 +145,12 @@ function* updateCourse(action) {
 
 
 
-function* deleteCourse(action) {
+function* deleteCourse(action : DeleteCourseAction) {
   try {
     yield call(axios.delete, `http://127.0.0.1:8000/api/courses/${action.payload}`);
     yield put({ type: DELETE_COURSE_SUCCESS, payload: action.payload });
   } catch (error) {
-    yield put({ type: DELETE_COURSE_FAILURE, payload: error.message });
+    yield put({ type: DELETE_COURSE_FAILURE, payload:( error as Error).message });
   }
 }
 
@@ -122,7 +161,7 @@ function* deleteCourse(action) {
 ////////////// students
 
 
-function* fetchstudentsaga(action){
+function* fetchstudentsaga(action: FetchStudentsAction){
   try{
     
     console.log("action.payload----", action.payload);
@@ -144,7 +183,7 @@ function* fetchstudentsaga(action){
 }catch (error) {
   
   
-  yield put({type:FETCH_STUDENTS_FAILURE,payload:error.message});
+  yield put({type:FETCH_STUDENTS_FAILURE,payload:(error as Error).message});
 }
 }
 
@@ -157,7 +196,7 @@ function* fetchstudentsaga(action){
 
 
 
-function* createstudents(action){
+function* createstudents(action:CreateStudentAction){
   try {
     
     const response:AxiosRequestConfig = yield call(axios.post, 'http://127.0.0.1:8000/api/students', action.payload);
@@ -166,28 +205,28 @@ function* createstudents(action){
     yield put({type: CREATE_STUDENTS_SUCCESS, payload: response.data});
   } catch (error) {
     
-    yield put({type :CREATE_STUDENTS_FAILURE, payload:error.message});
+    yield put({type :CREATE_STUDENTS_FAILURE, payload:(error as Error).message});
   }
 }
 
 
 
 
-function* editStudentSaga(action) {
+function* editStudentSaga(action: { payload: UpdateStudentAction }) {
   try {
    
-    const response = yield call(axios.put, `http://127.0.0.1:8000/api/students/${action.payload.id}`, action.payload);
+    const response:AxiosRequestConfig = yield call(axios.put, `http://127.0.0.1:8000/api/students/${action.payload.id}`, action.payload);
     
    
     yield put({type :UPDATE_STUDENTS_SUCCESS, payload: response.data});
   } catch (error) {
    
-    yield put({ type: UPDATE_STUDENTS_FAILURE, payload: error.message});
+    yield put({ type: UPDATE_STUDENTS_FAILURE, payload: (error as Error).message});
   }
 }
 
 
-function* deleteStudentSaga(action) {
+function* deleteStudentSaga(action:DeleteStudentAction) {
   try {
     
     yield call(axios.delete, `http://127.0.0.1:8000/api/students/${action.payload}`);
@@ -196,7 +235,7 @@ function* deleteStudentSaga(action) {
     yield put({type: DELETE_STUDENTS_SUCCESS,payload:action.payload});
   } catch (error) {
     
-    yield put({type: DELETE_STUDENTS_FAILURE,payload: error.message});
+    yield put({type: DELETE_STUDENTS_FAILURE,payload:(error as Error).message});
   }
 }
 

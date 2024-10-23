@@ -21,7 +21,7 @@ import {
   TableCell,
   TableContainer,
   Paper,
-  Container,
+
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -35,6 +35,7 @@ import {
   addStudentRequest,
   editStudentRequest,
   deleteStudentRequest,
+  fetchStudentsRequest,
 } from "./course/actions";
 import { selectCourses } from "./course/selectors";
 import { selectTeachers } from "./createteacher/selectors";
@@ -42,27 +43,58 @@ import { fetchTeachersRequest } from "./createteacher/actions";
 import CancelIcon from "@mui/icons-material/Cancel";
 import'./index.css';
 
+
+
+
+
+interface Student {
+  id?: string | number;
+  name: string;
+  course: string;
+}
+
+interface Course {
+  id?: string | number;
+  name: string;
+}
+
+interface Teacher {
+  id: string | number;
+  username: string;
+  course: string;
+}
+
+
 function Dashboard() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const courses = useSelector(selectCourses);
+  const courses = useSelector((state: { courseReducer: { courses: Course[] } }) => state.courseReducer.courses);
+  //const course = useSelector(selectCourses);
   const teachers = useSelector(selectTeachers);
-  const [students, setStudents] = useState<unknown[]>([]);
-  const [selectedCourse, setSelectedCourse] = useState<string>("");
+ // const teachers = useSelector((state: { createTeacherReducer: { teachers: Teacher[] } }) => state.createTeacherReducer.teachers);
+
+  const [students, setStudents] = useState<Student[]>([]);
+  const [selectedCourse, setSelectedCourse] = useState<string>('');
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [openStudentDialog, setOpenStudentDialog] = useState(false);
   const [openCourseDialog, setOpenCourseDialog] = useState(false);
-  const [currentStudent, setCurrentStudent] = useState<unknown>(null);
+  const [currentStudent, setCurrentStudent] = useState<Student | null>(null);
   const [isEditingStudent, setIsEditingStudent] = useState(false);
-  const [currentCourse, setCurrentCourse] = useState<unknown>(null);
+  const [currentCourse, setCurrentCourse] = useState<Course | null>(null);
   const [isEditingCourse, setIsEditingCourse] = useState(false);
-  const [selectedTeacher, setSelectedTeacher] = useState<unknown>("");
-  const [teacherCourse, setTeacherCourse] = useState<string>("");
+  const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
+  const [course, setCourse] = useState<string>("");
+
+
+
 
   useEffect(() => {
     dispatch(fetchTeachersRequest());
     dispatch(fetchCoursesRequest());
+
   }, [dispatch]);
+
+
 
   const handleListItemClick = async (
     _event: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -73,7 +105,7 @@ function Dashboard() {
     setSelectedCourse(course.name);
 
     try {
-      const token = localStorage.getItem("token");
+     const token = localStorage.getItem("token");
       const response = await axios.get(
         "http://127.0.0.1:8000/api/studentlist",
         {
@@ -81,6 +113,7 @@ function Dashboard() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+    dispatch(fetchStudentsRequest({course:course.name}))
       setStudents(response.data);
     } catch (error) {
       console.error("Error fetching students:", error);
@@ -94,13 +127,13 @@ function Dashboard() {
     );
     if (teacher) {
       setSelectedTeacher(teacher);
-      setTeacherCourse(teacher.course);
+      setCourse(teacher.course);
     } else {
-      setTeacherCourse("");
+      setCourse("");
     }
   };
 
-  const handleOpenStudentDialog = (student = null, editing = false) => {
+  const handleOpenStudentDialog = (student: Student | null = null, editing = false) => {
     setCurrentStudent(student);
     setIsEditingStudent(editing);
     setOpenStudentDialog(true);
@@ -115,11 +148,39 @@ function Dashboard() {
   const handleAddStudent = async () => {
     if (!currentStudent || !currentStudent.name || !currentStudent.course)
       return;
-    const newStudent = { ...currentStudent, course: selectedCourse };
-
-    dispatch(addStudentRequest(newStudent));
-    handleCloseStudentDialog();
+   const newStudent = { ...currentStudent, course: selectedCourse };
+   dispatch(addStudentRequest(newStudent));
+   handleCloseStudentDialog();
+  // dispatch(fetchStudentsRequest({ course: selectedCourse }));
   };
+
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (currentStudent) {
+      setCurrentStudent({ 
+        ...currentStudent, 
+        name: e.target.value, 
+        course: currentStudent.course || "" // Ensure course is set to a string
+      });
+    }
+  };
+
+
+  const handleCourseNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setCurrentCourse({
+        ...currentCourse,
+        name: e.target.value,
+       
+      });
+
+  };
+
+
+
+
+
+
+
 
   const handleEditStudent = async () => {
     if (!currentStudent) return;
@@ -127,11 +188,15 @@ function Dashboard() {
     handleCloseStudentDialog();
   };
 
-  const handleDeleteStudent = async (studentToDelete: { id: unknown }) => {
-    dispatch(deleteStudentRequest(studentToDelete.id));
+  const handleDeleteStudent = async (studentToDelete: Student) => {
+    if (studentToDelete.id !== undefined) {
+      dispatch(deleteStudentRequest(studentToDelete.id)); 
+    } else {
+      console.error("Cannot delete student without an ID.");
+    }
   };
 
-  const handleOpenCourseDialog = (course = null, editing = false) => {
+  const handleOpenCourseDialog = (course: Course | null = null, editing = false) => {
     setCurrentCourse(course);
     setIsEditingCourse(editing);
     setOpenCourseDialog(true);
@@ -163,10 +228,6 @@ function Dashboard() {
     setSelectedCourse("");
   };
 
-  //  const handelteachecnacel=()=>{
-  //   setSelectedTeacher();
-  //  }
-
 
 
   const handlelogout=()=>{
@@ -176,14 +237,14 @@ function Dashboard() {
     
   }
 
-  console.log("teacherCourse-state--", teacherCourse);
+  console.log("teacher   and Course-state--", course);
 
   return (
     <>
     
-      <div>
+      <div> 
         <header  id="header"><h1>College Management</h1>
-       <Button onClick={handlelogout} variant="contained" style={{position:"absolute", top:'67px', right:'70px'}}>LOGOUT</Button></header>
+       <Button onClick={handlelogout} variant="contained" style={{position:"absolute", top:'67px', right:'150px'}}>LOGOUT</Button></header>
         <div style={{color:'black', position:"absolute", top:'150px' }}>Dashboard</div>
 
         <Box
@@ -197,7 +258,7 @@ function Dashboard() {
           }}
         >
           <List component="nav">
-            {courses.map((course: any, index: number) => (
+            {courses.map((course,index) => (
               <ListItemButton
                 key={course.id}
                 selected={selectedIndex === index}
@@ -279,7 +340,7 @@ function Dashboard() {
             <Button
               onClick={() =>
                 handleOpenStudentDialog(
-                  { name: "", course: selectedCourse },
+                  {id:"new", name: "", course: selectedCourse },
                   false
                 )
               }
@@ -323,8 +384,8 @@ function Dashboard() {
           </Button>
         </Box>
 
-        {teacherCourse ? (
-          <TeacherDashboard course={teacherCourse} />
+        {course ? (
+          <TeacherDashboard course={course} showlogut={false} />
         ) : (
           <p>Please select a teacher to see their course's student list.</p>
         )}
@@ -342,9 +403,10 @@ function Dashboard() {
             fullWidth
             variant="outlined"
             value={currentStudent ? currentStudent.name : ""}
-            onChange={(e) =>
-              setCurrentStudent({ ...currentStudent, name: e.target.value })
-            }
+            // onChange={(e) =>
+            //   setCurrentStudent({ ...currentStudent, name: e.target.value })
+            // }
+            onChange={handleNameChange}
           />
         </DialogContent>
         <DialogActions>
@@ -369,9 +431,10 @@ function Dashboard() {
             fullWidth
             variant="outlined"
             value={currentCourse ? currentCourse.name : ""}
-            onChange={(e) =>
-              setCurrentCourse({ ...currentCourse, name: e.target.value })
-            }
+            // onChange={(e) =>
+            //   setCurrentCourse({ ...currentCourse, name: e.target.value })
+            // }
+            onChange={handleCourseNameChange}
           />
         </DialogContent>
         <DialogActions>

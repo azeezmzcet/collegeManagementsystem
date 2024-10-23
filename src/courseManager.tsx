@@ -1,6 +1,6 @@
 
 // CourseManager.tsx
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { Table, TableHead, TableBody, TableRow, TableCell, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -9,10 +9,11 @@ import {
   updateCourseRequest,
   deleteCourseRequest,
 } from './course/actions';
+import { RootState } from './store';
 
 function CourseManager() {
   const dispatch = useDispatch();
-  const { courses } = useSelector(state => state.courseReducer);
+  const { courses } = useSelector((state:RootState )=> state.courseReducer);
   const [openDialog, setOpenDialog] = useState(false);
   const [currentCourse, setCurrentCourse] = useState({ name: '', id: null });
   const [isEditing, setIsEditing] = useState(false);
@@ -20,7 +21,7 @@ function CourseManager() {
   console.log('coursemanager 2');
 
   useEffect(() => {
-    dispatch(fetchCoursesRequest(course));
+    dispatch(fetchCoursesRequest());
     console.log('coursemanager 1');
     
   }, [dispatch]);
@@ -68,7 +69,7 @@ function CourseManager() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {courses.map(course => (
+          {courses.map((course: { name: string; id: null; }) => (
             <TableRow key={course.id}>
               <TableCell>{course.name}</TableCell>
               <TableCell>

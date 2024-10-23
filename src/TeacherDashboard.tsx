@@ -15,11 +15,12 @@ import { useNavigate } from "react-router-dom";
 interface TeacherDashboardProps {
   course?: string;
   courseType?: string; // Receive the selected teacher's course as a prop
+  showlogut?:boolean;
 }
 
-function TeacherDashboard({ course }: TeacherDashboardProps) {
+function TeacherDashboard({ course , showlogut=true }: TeacherDashboardProps) {
 
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
   const dispatch = useDispatch();
   const navigate=useNavigate();
   const students = useSelector(selectStudents);
@@ -40,18 +41,20 @@ function TeacherDashboard({ course }: TeacherDashboardProps) {
   const handlelogout=()=>{
     navigate('/')
     localStorage.clear();
-    console.log('sotrgae clear');
+    console.log('storage clear');
  
   }
 
 
 
   return (
-    <div>
-      <Button onClick={handlelogout} variant="contained" style={{position:"absolute" ,top:'40px',right:'40px'}}>LOGOUT</Button>
+    <div style={{backgroundColor:'black'}}>
+      {showlogut && (
+      <Button onClick={handlelogout} variant="contained" style={{position:"absolute" ,top:'45px',right:'180px'}}>LOGOUT</Button>
+      )}
       <Box>
        
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" gutterBottom   color="white">
         Student List
       </Typography>
       

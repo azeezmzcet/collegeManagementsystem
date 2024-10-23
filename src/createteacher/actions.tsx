@@ -15,7 +15,7 @@ export const FETCH_TEACHER_FAILURE = 'FETCH_TEACHERS_FAILURE';
 
 export const fetchTeachersRequest = () => ({ type: FETCH_TEACHER_REQUEST });
 
-export const fetchTeachersSuccess = (teachers: any) => ({
+export const fetchTeachersSuccess = (teachers: unknown) => ({
   type: FETCH_TEACHER_SUCCESS,
   payload: teachers,
 });
@@ -37,7 +37,7 @@ export const createTeacherRequest = (teacherData: { username: string; password: 
     payload: teacherData,
   });
   
-  export const createTeacherSuccess = (teacher: any) => ({
+  export const createTeacherSuccess = (teacher: unknown) => ({
     
     type: CREATE_TEACHER_SUCCESS,
     payload: teacher,

@@ -11,3 +11,8 @@
   color: white;
   padding: 0.5px;
  }
+ #header h1{
+    right: 30px;
+    position: relative;
+
+ }

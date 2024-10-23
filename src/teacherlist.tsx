@@ -18,6 +18,11 @@ interface TeacherPayload {
   course: string;
 }
 
+interface Course {
+  id: string | number; // Adjust as necessary
+  name: string;
+}
+
 function CreateTeacher() {
   const [list, setList] = useState<string>("");
   const [username, setUsername] = useState<string>("");
@@ -124,7 +129,7 @@ function CreateTeacher() {
               
             >
                {/* Dynamically populate courses */}
-               {courses.map((course: unknown) => (
+               {courses.map((course:Course) => (
                 <MenuItem key={course.id} value={course.name}>
                   {course.name}
                 </MenuItem>
