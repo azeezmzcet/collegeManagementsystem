@@ -9,6 +9,7 @@ import {
   CREATE_TEACHER_REQUEST,
   CREATE_TEACHER_SUCCESS,
   CREATE_TEACHER_FAILURE,
+   DELETE_TEACHER_SUCCESS,
   
 } from "./actions";
 
@@ -24,6 +25,7 @@ const initialState: TeacherCreateState = {
   error: null,
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const teacherCreateReducer = (state = initialState, action: any) => {
   switch (action.type) {
 
@@ -64,6 +66,17 @@ const teacherCreateReducer = (state = initialState, action: any) => {
     case CREATE_TEACHER_FAILURE:
       console.log('create 6');
       return { ...state, loading: false, error: action.payload };
+
+
+      case DELETE_TEACHER_SUCCESS:
+        return {
+          ...state,
+          teachers: state.teachers.filter((teacher) => teacher.id !== action.payload),
+          loading: false,
+        };
+       
+
+
 
     default:
       return state;

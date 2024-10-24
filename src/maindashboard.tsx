@@ -37,9 +37,9 @@ import {
   deleteStudentRequest,
   fetchStudentsRequest,
 } from "./course/actions";
-import { selectCourses } from "./course/selectors";
+
 import { selectTeachers } from "./createteacher/selectors";
-import { fetchTeachersRequest } from "./createteacher/actions";
+import { deleteTeacherRequest, fetchTeachersRequest } from "./createteacher/actions";
 import CancelIcon from "@mui/icons-material/Cancel";
 import'./index.css';
 
@@ -72,6 +72,7 @@ function Dashboard() {
   //const course = useSelector(selectCourses);
   const teachers = useSelector(selectTeachers);
  // const teachers = useSelector((state: { createTeacherReducer: { teachers: Teacher[] } }) => state.createTeacherReducer.teachers);
+ const studentss = useSelector((state) => state.courseReducer.students);
 
   const [students, setStudents] = useState<Student[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<string>('');
@@ -237,6 +238,18 @@ function Dashboard() {
     
   }
 
+
+  const handleDeleteTeacher = (teacher: Teacher) => {
+    if (teacher.id !== undefined) {
+      dispatch(deleteTeacherRequest(teacher.id)); 
+    } else {
+      console.error("Cannot delete teacher without an ID.");
+    }
+  };
+  
+
+
+
   console.log("teacher   and Course-state--", course);
 
   return (
@@ -308,8 +321,8 @@ function Dashboard() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {students.length > 0 ? (
-                    students.map((student) => (
+                  {studentss.length > 0 ? (
+                    studentss.map((student) => (
                       <TableRow key={student.id}>
                         <TableCell>{student.name}</TableCell>
                         <TableCell>{student.course}</TableCell>
@@ -375,6 +388,9 @@ function Dashboard() {
               {teachers.map((teacher: id | string | number) => (
                 <MenuItem key={teacher.id} value={teacher.username}>
                   {teacher.username}
+                  <Button onClick={() => handleDeleteTeacher(teacher)} color="error" sx={{marginLeft:'auto'}}>
+          Delete
+        </Button>
                 </MenuItem>
               ))}
             </Select>

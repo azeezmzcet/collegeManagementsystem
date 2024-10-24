@@ -1,10 +1,27 @@
 // sagas/authSaga.js
 
 import { call, put, takeLatest } from 'redux-saga/effects';
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, {  AxiosError, AxiosRequestConfig } from 'axios';
 import { LOGIN_REQUEST, loginSuccess, loginFailure } from './actions';
+import { NavigateFunction } from 'react-router-dom';
 
-function* loginSaga(action: { payload: { username: unknown; password: unknown; navigate: unknown; }; }) {
+
+
+interface ErrorResponse {
+  message: string; // Adjust this based on your API's actual error response structure
+}
+
+
+
+interface LoginRequestPayload {
+  username: string;
+  password: string;
+  navigate: NavigateFunction;
+}
+
+
+
+function* loginSaga(action: { payload: LoginRequestPayload }) {
   const { username, password, navigate } = action.payload;
   try {
    
@@ -24,7 +41,7 @@ function* loginSaga(action: { payload: { username: unknown; password: unknown; n
       if (data.role === 'principal') {
         yield put(loginSuccess({ role: data.role, course: data.course }));
 
-        window.location.href = '/dashboard'; // Redirect to principal's dashboard
+        window.location.replace('/dashboard'); // Redirect to principal's dashboard
 
       } else if (data.role === 'teacher') {
         localStorage.setItem('teacherCourse', data.course);
@@ -32,13 +49,16 @@ function* loginSaga(action: { payload: { username: unknown; password: unknown; n
         yield put(loginSuccess({ role: data.role, course: data.course }));
 
         // using navigate to redirect
-        navigate('/studentlists');
+        // navigate('/studentlists');
+        window.location.replace('/studentlists');
       }
     } else {
       throw new Error('Login failed, no token returned');
     }
   } catch (error) {
-    yield put(loginFailure(error.response?.data?.message || 'An error occurred, please try again'));
+    const axiosError = error as AxiosError<ErrorResponse>;
+    const errorMessage = axiosError.response?.data?.message || 'An error occurred, please try again';
+    yield put(loginFailure(errorMessage));
   }
 }
 

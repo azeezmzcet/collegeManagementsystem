@@ -39,6 +39,12 @@ import {
  
 } from './actions';
 
+interface Student {
+  id: string | number; 
+  name: string; 
+  course: string;
+  
+}
 
 
 
@@ -71,7 +77,7 @@ interface CreateStudentAction {
 interface UpdateStudentAction {
   id: unknown;
   type: typeof UPDATE_STUDENTS_REQUEST;
-  payload: unknown; // Define specific student shape if possible
+  payload: Student; // Define specific student shape if possible
 }
 
 interface DeleteStudentAction {
@@ -203,6 +209,7 @@ function* createstudents(action:CreateStudentAction){
     
    
     yield put({type: CREATE_STUDENTS_SUCCESS, payload: response.data});
+    yield put({ type: 'FETCH_STUDENTS_REQUEST' });
   } catch (error) {
     
     yield put({type :CREATE_STUDENTS_FAILURE, payload:(error as Error).message});
@@ -212,13 +219,14 @@ function* createstudents(action:CreateStudentAction){
 
 
 
-function* editStudentSaga(action: { payload: UpdateStudentAction }) {
+function* editStudentSaga(action: UpdateStudentAction ) {
   try {
    
     const response:AxiosRequestConfig = yield call(axios.put, `http://127.0.0.1:8000/api/students/${action.payload.id}`, action.payload);
     
    
     yield put({type :UPDATE_STUDENTS_SUCCESS, payload: response.data});
+    yield put({ type: 'FETCH_STUDENTS_REQUEST' });
   } catch (error) {
    
     yield put({ type: UPDATE_STUDENTS_FAILURE, payload: (error as Error).message});
@@ -233,6 +241,7 @@ function* deleteStudentSaga(action:DeleteStudentAction) {
     
    
     yield put({type: DELETE_STUDENTS_SUCCESS,payload:action.payload});
+    yield put({ type: 'FETCH_STUDENTS_REQUEST' });
   } catch (error) {
     
     yield put({type: DELETE_STUDENTS_FAILURE,payload:(error as Error).message});

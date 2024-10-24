@@ -63,6 +63,12 @@ export const DELETE_STUDENTS_FAILURE = "DELETE_STUDENTS_FAILURE";
 //..
 
 
+interface Student {
+  id: string | number; // Define the type according to your implementation
+  name: string;
+  course: string;
+}
+
 
 
 export const fetchStudentsRequest = (course: { course: string | null; }) => ({
@@ -105,10 +111,13 @@ export const fetchStudentsRequest = (course: { course: string | null; }) => ({
     payload: student,
   });
   
-  export const editStudentSuccess = (student: unknown) => ({
+  export const editStudentSuccess = (student: Student) => ({
     type: UPDATE_STUDENTS_SUCCESS,
     payload: student,
   });
+  
+
+
   
   export const editStudentFailure = (error:unknown) => ({
     type: UPDATE_STUDENTS_FAILURE,
@@ -121,10 +130,16 @@ export const fetchStudentsRequest = (course: { course: string | null; }) => ({
     payload: studentId,
   });
   
-  export const deleteStudentSuccess = (studentId: unknown) => ({
-    type: DELETE_STUDENTS_SUCCESS,
-    payload: studentId,
-  });
+  // export const deleteStudentSuccess = (studentId: unknown) => ({
+  //   type: DELETE_STUDENTS_SUCCESS,
+  //   payload: studentId,
+  // });
+
+
+export const deleteStudentsSuccess = (id: string | number) => ({
+  type: DELETE_STUDENTS_SUCCESS,
+  payload: id, // Ensure this is just the ID
+});
   
   export const deleteStudentFailure = (error: unknown) => ({
     type: DELETE_STUDENTS_FAILURE,

@@ -5,10 +5,21 @@ export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 
 
+interface LoginRequestPayload {
+  username: string;
+  password: string;
+  navigate: NavigateFunction;
+}
+
+// Define the action interface
+interface LoginRequestAction {
+  type: typeof LOGIN_REQUEST;
+  payload: LoginRequestPayload;
+}
 
 
 
-export const loginRequest = (username: string, password: string, navigate: NavigateFunction) => ({
+export const loginRequest = (username: string, password: string, navigate: NavigateFunction):LoginRequestAction => ({
     type: LOGIN_REQUEST,
     payload: { username, password, navigate },
   });

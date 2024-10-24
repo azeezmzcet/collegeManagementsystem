@@ -14,6 +14,9 @@ import {
   CREATE_TEACHER_REQUEST,
   CREATE_TEACHER_SUCCESS,
   CREATE_TEACHER_FAILURE,
+  deleteTeacherFailure,
+  deleteTeacherSuccess,
+  DELETE_TEACHER_REQUEST,
 } from './actions';
 
 
@@ -61,6 +64,16 @@ function* createTeacherSaga(action: any) {
 }
 
 
+function* deleteTeacherSaga(action: unknown) {
+  try {
+    yield call(axios.delete, `http://127.0.0.1:8000/api/teachers/${action.payload}`);
+    yield put(deleteTeacherSuccess(action.payload));
+  } catch (error) {
+    yield put(deleteTeacherFailure((error as Error).message));
+  }
+}
+
+
 
 
 
@@ -73,5 +86,6 @@ function* createTeacherSaga(action: any) {
 export function* teacherSaga() {
   yield takeEvery(FETCH_TEACHER_REQUEST, fetchTeacher);
   yield takeEvery(CREATE_TEACHER_REQUEST, createTeacherSaga);
+   yield takeEvery(DELETE_TEACHER_REQUEST, deleteTeacherSaga);
   
 }

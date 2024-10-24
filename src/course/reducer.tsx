@@ -21,14 +21,22 @@ import {
     
   } from './actions';
 
+
+  interface Action {
+    type: string;
+    payload: string | number ; // Adjust as needed
+  }
+
   interface Course {
     id: number; 
-    name: string; 
+    name: string ; 
   }
   
   interface Student {
-    id: number; 
+    id: string | number; 
     name: string; 
+    course: string;
+    
   }
 
 
@@ -48,7 +56,7 @@ import {
     error: null,
   };
   
-  const courseReducer = (state = initialState, action: { type: unknown; payload: { id: unknown; }; }) => {
+  const courseReducer = (state = initialState, action: Action) => {
     switch (action.type) {
       case FETCH_COURSES_SUCCESS:
         return { ...state, courses: action.payload };

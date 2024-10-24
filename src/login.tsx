@@ -1,7 +1,7 @@
 
 import { Alert, Box, Button, Grid, Snackbar, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginRequest } from './login/actions';
 
@@ -16,7 +16,7 @@ function Login() {
   const [usernameedit, setUsernameedit] = useState<string>('');
   const [passwordedit, setPasswordedit] = useState<string>('');
 
- const navigate = useNavigate();
+//  const navigate = useNavigate();
  const dispatch=useDispatch();
 
  const validateUsername = (username: string) => {
@@ -43,7 +43,7 @@ const validatePassword = (password: string) => {
  validateUsername(username);
  validatePassword(password);
 if(!usernameedit && !passwordedit){
-  dispatch(loginRequest(username,password, navigate));
+  dispatch(loginRequest(username,password));
   console.log('function logon workig');
   setOpen(true);
 

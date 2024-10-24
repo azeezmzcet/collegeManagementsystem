@@ -31,6 +31,7 @@ sagaMiddleware.run(courseSaga);
  sagaMiddleware.run(teacherSaga); 
  sagaMiddleware.run(watchLogin); 
 
-
+ export type RootState = ReturnType<typeof rootReducer>;
+ 
 export default store;
 

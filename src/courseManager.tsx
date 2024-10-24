@@ -11,9 +11,15 @@ import {
 } from './course/actions';
 import { RootState } from './store';
 
+interface Course {
+  id: number | string | null; // or `string` based on your backend
+  name: string;
+}
+
+
 function CourseManager() {
   const dispatch = useDispatch();
-  const { courses } = useSelector((state:RootState )=> state.courseReducer);
+  const  courses  = useSelector((state:RootState )=> state.courseReducer.courses) as Course[];
   const [openDialog, setOpenDialog] = useState(false);
   const [currentCourse, setCurrentCourse] = useState({ name: '', id: null });
   const [isEditing, setIsEditing] = useState(false);
@@ -69,11 +75,11 @@ function CourseManager() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {courses.map((course: { name: string; id: null; }) => (
+          {courses.map((course) => (
             <TableRow key={course.id}>
               <TableCell>{course.name}</TableCell>
               <TableCell>
-                <Button onClick={() => handleOpenDialog(course, true)}>Edit</Button>
+                <Button onClick={() => handleOpenDialog({ name: course.name, id: null }, true)}>Edit</Button>
                 <Button onClick={() => handleDeleteCourse(course.id)}>Delete</Button>
               </TableCell>
             </TableRow>
